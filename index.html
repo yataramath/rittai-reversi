@@ -298,15 +298,6 @@ input[type="range"] { width: 92px; accent-color: var(--brass); }
 .name-row input:disabled { opacity: .7; }
 .name-msg { margin: 0; min-height: 1.4em; font-size: 12.5px; color: var(--ink-soft); }
 
-.hall-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-.hall-tabs button {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent;
-  font-size: 13px; cursor: pointer;
-}
-.hall-tabs button:hover { border-color: var(--brass); }
-.hall-tabs button[aria-selected="true"] { background: var(--brass); border-color: var(--brass); color: var(--brass-ink); font-weight: 700; }
-.hall-tabs i { font-style: normal; font-family: var(--mono); font-size: 11px; opacity: .8; }
 .hall-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; max-height: 232px; overflow-y: auto; }
 .hall-list li {
   display: flex; align-items: center; gap: 8px; min-width: 0;
@@ -333,7 +324,28 @@ input[type="range"] { width: 92px; accent-color: var(--brass); }
 .hall-list .hx.armed { color: var(--brass-ink); background: var(--brass); }
 .hall-list .empty { font-size: 13px; color: var(--ink-soft); border-bottom: 0; }
 .hall-note { margin: 8px 0 0; font-size: 12px; color: var(--ink-soft); line-height: 1.5; }
-.hall-pending { width: 100%; margin-bottom: 10px; border-color: var(--brass); color: var(--brass); }
+.hall-pending { border-color: var(--brass); color: var(--brass); }
+.brand-tools { display: flex; gap: 8px; align-items: center; flex: none; }
+.lang-btn {
+  height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent;
+  font-size: 12.5px; font-weight: 700; cursor: pointer;
+}
+.lang-btn:hover { border-color: var(--brass); }
+.hall-link { display: inline-block; margin-top: 14px; font-size: 13px; font-weight: 700; color: var(--brass); text-decoration: none; }
+.hall-link:hover { text-decoration: underline; }
+.hall-page {
+  margin: 0 16px 24px; padding: 22px 22px 24px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+}
+.hall-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.hall-head h2 { margin: 0; font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1.2; }
+.hall-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 32px; }
+.hall-col { min-width: 0; }
+.hall-col h3 { margin: 0 0 6px; font-size: 15px; font-weight: 700; display: flex; align-items: baseline; gap: 8px; }
+.hall-col h3 .cnt { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--ink-soft); }
+.hall-stat { margin: 0 0 2px; font-size: 12.5px; color: var(--ink-soft); }
+.hall-col .hall-list { margin-top: 8px; max-height: 440px; }
+@media (max-width: 720px) { .hall-cols { grid-template-columns: minmax(0, 1fr); } .hall-page { padding: 18px 16px 20px; } }
 
 .app:fullscreen { width: 100%; height: 100%; overflow-y: auto; background: var(--felt-deep); }
 .app:-webkit-full-screen { width: 100%; height: 100%; overflow-y: auto; background: var(--felt-deep); }
@@ -383,9 +395,9 @@ body.lock { overflow: hidden; }
 
 
 <div class="app">
-  <section class="stage" id="stage" aria-label="立体盤面">
+  <section class="stage" id="stage" aria-label="立体盤面" data-ta="aria-label:stageAria">
     <canvas id="scene" aria-hidden="true"></canvas>
-    <p class="fallback" id="fallback" hidden>この端末では3D表示を開けませんでした。層ごとの盤面から、そのまま対局できます。</p>
+    <p class="fallback" id="fallback" data-t="fallback" hidden>この端末では3D表示を開けませんでした。層ごとの盤面から、そのまま対局できます。</p>
 
     <div class="hud-top">
       <div class="hud-left">
@@ -402,10 +414,10 @@ body.lock { overflow: hidden; }
       <div class="capsule tools">
         <label for="spread">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/><path d="M12 2.5v2M12 19.5v2"/></svg>
-          <span>層の間隔</span>
+          <span data-t="spread">層の間隔</span>
         </label>
-        <input type="range" id="spread" min="1.15" max="2.8" step="0.01" value="1.9" aria-label="層の間隔">
-        <button class="icon-btn" id="resetView" type="button" title="視点を戻す" aria-label="視点を戻す">
+        <input type="range" id="spread" min="1.15" max="2.8" step="0.01" value="1.9" aria-label="層の間隔" data-ta="aria-label:spread">
+        <button class="icon-btn" id="resetView" type="button" title="視点を戻す" aria-label="視点を戻す" data-ta="title:resetView;aria-label:resetView">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.6-5.9"/><path d="M4 4v4.5h4.5"/></svg>
         </button>
         <button class="icon-btn" id="fsBtn" type="button" title="全画面表示 (F)" aria-label="全画面表示" aria-pressed="false">
@@ -415,8 +427,8 @@ body.lock { overflow: hidden; }
       </div>
     </div>
 
-    <div class="layer-rail" id="rail" role="group" aria-label="表示する層">
-      <button type="button" data-layer="-1" aria-pressed="true" title="全層を表示">全</button>
+    <div class="layer-rail" id="rail" role="group" aria-label="表示する層" data-ta="aria-label:railAria">
+      <button type="button" data-layer="-1" aria-pressed="true" title="全層を表示" data-t="railAll" data-ta="title:railAllTitle">全</button>
       <button type="button" data-layer="3" aria-pressed="false" title="4層だけを表示">4</button>
       <button type="button" data-layer="2" aria-pressed="false" title="3層だけを表示">3</button>
       <button type="button" data-layer="1" aria-pressed="false" title="2層だけを表示">2</button>
@@ -427,8 +439,8 @@ body.lock { overflow: hidden; }
 
     <div class="capsule confirm" id="confirm" hidden>
       <span id="confirmText"></span>
-      <button class="btn primary" id="confirmGo" type="button">ここに置く</button>
-      <button class="icon-btn" id="confirmX" type="button" aria-label="選択をやめる">
+      <button class="btn primary" id="confirmGo" type="button" data-t="confirmGo">ここに置く</button>
+      <button class="icon-btn" id="confirmX" type="button" aria-label="選択をやめる" data-ta="aria-label:cancelSel">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
     </div>
@@ -443,16 +455,16 @@ body.lock { overflow: hidden; }
         <p class="result-score"><span class="disc-icon k"></span><b id="rB">0</b><span class="dash">–</span><b id="rW">0</b><span class="disc-icon w"></span></p>
         <p class="result-rec" id="resultRec" hidden></p>
         <form class="name-form" id="nameForm" hidden novalidate>
-          <label for="nameInput">名前を残す</label>
+          <label for="nameInput" data-t="nameLabel">名前を残す</label>
           <div class="name-row">
-            <input id="nameInput" type="text" maxlength="16" autocomplete="nickname" enterkeyhint="done" placeholder="名前（16文字まで）">
-            <button class="btn primary" id="nameGo" type="submit">登録</button>
+            <input id="nameInput" type="text" maxlength="16" autocomplete="nickname" enterkeyhint="done" placeholder="名前（16文字まで）" data-ta="placeholder:namePh">
+            <button class="btn primary" id="nameGo" type="submit" data-t="nameGo">登録</button>
           </div>
           <p class="name-msg" id="nameMsg" aria-live="polite"></p>
         </form>
         <div class="result-actions">
-          <button class="btn primary" id="again" type="button">もう一局</button>
-          <button class="btn" id="viewBoard" type="button">盤面を見る</button>
+          <button class="btn primary" id="again" type="button" data-t="again">もう一局</button>
+          <button class="btn" id="viewBoard" type="button" data-t="viewBoard">盤面を見る</button>
         </div>
       </div>
     </div>
@@ -461,73 +473,64 @@ body.lock { overflow: hidden; }
   <aside class="panel">
     <header class="brand">
       <div>
-        <h1>立体リバーシ</h1>
-        <p class="dims">4 × 4 × 4 · 64マス · 26方向</p>
+        <h1 data-t="brand">立体リバーシ</h1>
+        <p class="dims" data-t="dims">4 × 4 × 4 · 64マス · 26方向</p>
       </div>
-      <button class="icon-btn" id="sound" type="button" aria-pressed="true" aria-label="効果音" title="効果音">
+      <div class="brand-tools">
+      <button class="lang-btn" id="langBtn" type="button">EN</button>
+      <button class="icon-btn" id="sound" type="button" aria-pressed="true" aria-label="効果音" title="効果音" data-ta="aria-label:sound;title:sound">
         <svg id="soundOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a7.6 7.6 0 0 1 0 11"/></svg>
         <svg id="soundOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>
       </button>
+      </div>
     </header>
 
-    <section class="score" aria-label="石の数">
+    <section class="score" aria-label="石の数" data-ta="aria-label:scoreAria">
       <div class="side" id="sideB"><span class="disc-icon k"></span><div><span class="who" id="whoB">あなた</span><b class="num" id="numB">4</b></div></div>
       <div class="side" id="sideW"><span class="disc-icon w"></span><div><span class="who" id="whoW">まあまあ強い</span><b class="num" id="numW">4</b></div></div>
       <div class="bar" aria-hidden="true"><span class="bk" id="barB"></span><span class="bw" id="barW"></span></div>
       <p class="meta"><span id="empties">空き 88</span><span id="moveNo">0手</span></p>
     </section>
 
-    <section class="setup" aria-label="対局の設定">
+    <section class="setup" aria-label="対局の設定" data-ta="aria-label:setupAria">
       <div class="field">
-        <span class="label" id="lblOpp">相手</span>
+        <span class="label" id="lblOpp" data-t="lblOpp">相手</span>
         <div class="opp" id="opp" role="group" aria-labelledby="lblOpp">
-          <button class="opt" type="button" data-v="0"><b>普通</b><span class="pips"><i class="on"></i><i></i><i></i></span></button>
-          <button class="opt" type="button" data-v="1"><b>まあまあ強い</b><span class="pips"><i class="on"></i><i class="on"></i><i></i></span></button>
-          <button class="opt" type="button" data-v="2"><b>最強</b><span class="pips"><i class="on"></i><i class="on"></i><i class="on"></i></span></button>
-          <button class="opt" type="button" data-v="pvp"><b>2人で</b><small>1台で交代に打つ</small></button>
-          <button class="opt ex" type="button" data-v="3"><span class="ex-tag">EXTRA STAGE</span><b>最弱</b><small>全力で負けにくる。最弱に負けたら名前が残る</small></button>
+          <button class="opt" type="button" data-v="0"><b data-t="lv0">普通</b><span class="pips"><i class="on"></i><i></i><i></i></span></button>
+          <button class="opt" type="button" data-v="1"><b data-t="lv1">まあまあ強い</b><span class="pips"><i class="on"></i><i class="on"></i><i></i></span></button>
+          <button class="opt" type="button" data-v="2"><b data-t="lv2">最強</b><span class="pips"><i class="on"></i><i class="on"></i><i class="on"></i></span></button>
+          <button class="opt" type="button" data-v="pvp"><b data-t="pvp">2人で</b><small data-t="pvpSub">1台で交代に打つ</small></button>
+          <button class="opt ex" type="button" data-v="3"><span class="ex-tag">EXTRA STAGE</span><b data-t="lv3">最弱</b><small data-t="exSub">全力で負けにくる。最弱に負けたら名前が残る</small></button>
         </div>
       </div>
       <div class="field">
-        <span class="label" id="lblSide">あなたの石</span>
+        <span class="label" id="lblSide" data-t="lblSide">あなたの石</span>
         <div class="sides" id="sides" role="group" aria-labelledby="lblSide">
-          <button class="opt" type="button" data-v="1"><span class="disc-icon k"></span><b>黒・先手</b></button>
-          <button class="opt" type="button" data-v="2"><span class="disc-icon w"></span><b>白・後手</b></button>
+          <button class="opt" type="button" data-v="1"><span class="disc-icon k"></span><b data-t="blackFirst">黒・先手</b></button>
+          <button class="opt" type="button" data-v="2"><span class="disc-icon w"></span><b data-t="whiteSecond">白・後手</b></button>
         </div>
       </div>
       <div class="actions">
-        <button class="btn primary" id="newGame" type="button">新しい対局</button>
-        <button class="btn" id="undo" type="button">待った</button>
+        <button class="btn primary" id="newGame" type="button" data-t="newGame">新しい対局</button>
+        <button class="btn" id="undo" type="button" data-t="undo">待った</button>
       </div>
-      <p class="pending" id="pending" hidden>この変更は「新しい対局」から反映されます</p>
-    </section>
-
-    <section aria-labelledby="hHall">
-      <div class="sec-head"><h2 id="hHall">名前が残る人</h2><span class="axis" id="hallCount"></span></div>
-      <div class="hall-tabs" id="hallTabs" role="tablist" aria-label="どちらの一覧を見るか">
-        <button type="button" role="tab" data-l="2" aria-selected="true">最強に勝った人<i></i></button>
-        <button type="button" role="tab" data-l="3" aria-selected="false">最弱に負けた人<i></i></button>
-      </div>
-      <p class="my-record" id="globalRecord" hidden></p>
-      <p class="my-record" id="myRecord"></p>
-      <button class="btn hall-pending" id="hallPending" type="button" hidden>名前を登録する</button>
-      <ol class="hall-list" id="hallList"></ol>
-      <p class="hall-note" id="hallNote"></p>
+      <p class="pending" id="pending" data-t="pending" hidden>この変更は「新しい対局」から反映されます</p>
+      <a class="hall-link" id="hallLink" href="#hall" data-t="hallLink">名前が残る人を見る ↓</a>
     </section>
 
     <section aria-labelledby="hLayers">
-      <div class="sec-head"><h2 id="hLayers">層ごとの盤面</h2><span class="axis">列 A–D ・ 行 1–4</span></div>
+      <div class="sec-head"><h2 id="hLayers" data-t="hLayers">層ごとの盤面</h2><span class="axis" data-t="axisLayers">列 A–D ・ 行 1–4</span></div>
       <div class="minis" id="minis"></div>
     </section>
 
     <section aria-labelledby="hLog">
-      <div class="sec-head"><h2 id="hLog">棋譜</h2><span class="axis">層·列行 ＋返した数</span></div>
+      <div class="sec-head"><h2 id="hLog" data-t="hLog">棋譜</h2><span class="axis" data-t="axisLog">層·列行 ＋返した数</span></div>
       <ol class="moves" id="moves"></ol>
     </section>
 
     <details class="rules">
-      <summary>遊び方</summary>
-      <ul>
+      <summary data-t="rulesSummary">遊び方</summary>
+      <ul data-th="rulesHtml">
         <li>黒が先手。相手の石を自分の石で挟むと、挟んだ石がすべて自分の色に変わります。</li>
         <li>挟める向きは縦・横・高さと、その斜めを合わせた<b>26方向</b>。</li>
         <li>置ける場所は光る点で示されます。置ける場所がなければパス、両者とも置けなくなったら終局で、石の多いほうが勝ちです。</li>
@@ -539,6 +542,28 @@ body.lock { overflow: hidden; }
     </details>
   </aside>
 </div>
+
+<section class="hall-page" id="hall" aria-labelledby="hHall">
+  <div class="hall-head">
+    <h2 id="hHall" data-t="hallTitle">名前が残る人</h2>
+    <button class="btn hall-pending" id="hallPending" type="button" hidden>名前を登録する</button>
+  </div>
+  <div class="hall-cols">
+    <div class="hall-col">
+      <h3><span data-t="hallMax">最強に勝った人</span><span class="cnt" id="hallCnt2"></span></h3>
+      <p class="hall-stat" id="hallGlobal2" hidden></p>
+      <p class="hall-stat" id="hallMine2"></p>
+      <ol class="hall-list" id="hallList2"></ol>
+    </div>
+    <div class="hall-col">
+      <h3><span data-t="hallMin">最弱に負けた人</span><span class="cnt" id="hallCnt3"></span></h3>
+      <p class="hall-stat" id="hallGlobal3" hidden></p>
+      <p class="hall-stat" id="hallMine3"></p>
+      <ol class="hall-list" id="hallList3"></ol>
+    </div>
+  </div>
+  <p class="hall-note" id="hallNote"></p>
+</section>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script id="engine-src">
@@ -1189,11 +1214,129 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
     } catch (e) { return rid(16); }
   })();
   const $ = id => document.getElementById(id);
+  // ---------------- language: 日本語 / English ----------------
+  const I18N = {
+    ja: {
+      title: '立体リバーシ 4×4×4', brand: '立体リバーシ', dims: '4 × 4 × 4 · 64マス · 26方向',
+      langBtn: 'EN', langAria: 'Switch to English',
+      stageAria: '立体盤面', fallback: 'この端末では3D表示を開けませんでした。層ごとの盤面から、そのまま対局できます。',
+      spread: '層の間隔', resetView: '視点を戻す', fsEnter: '全画面表示', fsExit: '全画面を終了',
+      railAria: '表示する層', railAll: '全', railAllTitle: '全層を表示', layerOnly: '{n}層だけを表示', layerName: '{n}層',
+      hintMouse: 'ドラッグで回転・ホイールで拡大・光る点をクリックして置く',
+      hintTouch: 'ドラッグで回転・ピンチで拡大・光る点をタップで選び、もう一度タップで置く',
+      confirmGo: 'ここに置く', cancelSel: '選択をやめる', confirmText: '{cell} · {n}枚返る',
+      nameLabel: '名前を残す', namePh: '名前（16文字まで）', nameGo: '登録', again: 'もう一局', viewBoard: '盤面を見る',
+      sound: '効果音', scoreAria: '石の数', setupAria: '対局の設定',
+      lblOpp: '相手', lv0: '普通', lv1: 'まあまあ強い', lv2: '最強', lv3: '最弱', pvp: '2人で', pvpSub: '1台で交代に打つ',
+      exSub: '全力で負けにくる。最弱に負けたら名前が残る',
+      lblSide: 'あなたの石', blackFirst: '黒・先手', whiteSecond: '白・後手',
+      newGame: '新しい対局', undo: '待った', pending: 'この変更は「新しい対局」から反映されます',
+      hallLink: '名前が残る人を見る ↓',
+      hLayers: '層ごとの盤面', axisLayers: '列 A–D ・ 行 1–4', hLog: '棋譜', axisLog: '層·列行 ＋返した数',
+      rulesSummary: '遊び方',
+      rulesHtml: '<li>黒が先手。相手の石を自分の石で挟むと、挟んだ石がすべて自分の色に変わります。</li>' +
+        '<li>挟める向きは縦・横・高さと、その斜めを合わせた<b>26方向</b>。</li>' +
+        '<li>置ける場所は光る点で示されます。置ける場所がなければパス、両者とも置けなくなったら終局で、石の多いほうが勝ちです。</li>' +
+        '<li>立体の角<b>8か所</b>は、どの向きからも挟めないので一度取れば二度と返りません。辺の石は辺に沿ってしか、面の石は面の中でしか返りません。</li>' +
+        '<li><b>最強</b>に勝つか、<b>最弱</b>に負けると、名前を残せます。一覧の勝率は、その人がその相手と戦った成績です。</li>' +
+        '<li><b>最弱（エクストラステージ）</b>は、自分の石が少なくなるように全力で読んで負けにきます。最弱の石のほうが多く残ったら、あなたの負け＝クリアです。</li>' +
+        '<li>層の数字を押すとその層だけを表示します。「層の間隔」で積み重ねを広げると、内側が見やすくなります。</li>',
+      hallTitle: '名前が残る人', hallMax: '最強に勝った人', hallMin: '最弱に負けた人',
+      black: '黒', white: '白', you: 'あなた',
+      turnYou: 'あなたの番です', turnThinking: '{lv}が考え中', turnAI: '{lv}の番', turnColor: '{c}の番です', turnOver: '対局終了',
+      passToast: '{who}は置ける場所がないのでパス',
+      exToast: 'エクストラステージ：最弱は全力で負けにきます。最弱に負けたら名前が残ります',
+      delFail: '削除できませんでした。少し待ってからもう一度試してください',
+      empties: '空き {n}', moves: '{n}手',
+      kOver: 'GAME OVER · 対局終了', kEx: 'EXTRA STAGE CLEAR', kWin: 'WIN · {lv}',
+      tLostMin: '最弱に負けた！', tMinLost: '最弱の負け', sMinLost: '最弱は今日も負けました。最弱に負けたら名前が残ります。',
+      tDraw: '引き分け', sMinDraw: 'あと少し。最弱に負けたら名前が残ります。',
+      tBeatMax: '最強に勝った！', tYouWin: 'あなたの勝ち', sBeatMax: '最強に勝つと、名前を残せます。', tAIWins: '{lv}の勝ち',
+      tBlackWins: '黒の勝ち', tWhiteWins: '白の勝ち',
+      recLine: '対{lv}の戦績：{rate}', rate: '{g}戦{w}勝・勝率{p}%', rateNone: 'まだ対局なし',
+      nameEmpty: '名前を入力してください', nameSaving: '登録しています…', nameShared: '名前を登録しました', nameLocal: 'この端末の記録に残しました',
+      count: '{n}件', globalLine: 'みんなの対{lv}：{g}戦{w}勝・勝率{p}%', mineLine: 'あなたの対{lv}（この端末）：{rate}',
+      loading: '読み込み中…', emptyMax: 'まだ最強に勝った人はいません', emptyMin: 'まだ最弱に負けた人はいません',
+      playedBlack: '黒で対局', playedWhite: '白で対局',
+      wr: '勝率{p}%', wrDetail: '（{g}戦{w}勝）', undoTag: ' · 待った{n}', localTag: ' · この端末',
+      del: '削除', delAria: '{name}の記録を削除する', removeAria: '{name}の記録を消す',
+      noteShared: '名前の下の勝率は、その人がその相手と戦った成績です。最弱は勝つのが当たり前の相手です。',
+      noteReadonly: 'この表示では一覧を見るだけです。あなたの記録はこの端末に残ります。',
+      noteLocal: '記録はこの端末に残ります。',
+      pendMin: '最弱に負けました。名前を登録する', pendMax: '最強に勝ちました。名前を登録する',
+      cellLong: '{z}層 {cell}', stBlack: '黒', stWhite: '白', stLegal: '置ける・{n}枚返る', stEmpty: '空き',
+      noMoves: 'まだ一手も打たれていません', pass: 'パス',
+    },
+    en: {
+      title: '3D Reversi 4×4×4', brand: '3D Reversi', dims: '4 × 4 × 4 · 64 cells · 26 directions',
+      langBtn: '日本語', langAria: '日本語に切り替え',
+      stageAria: '3D board', fallback: "3D view isn't available on this device. You can still play on the layer boards.",
+      spread: 'Layer gap', resetView: 'Reset view', fsEnter: 'Full screen', fsExit: 'Exit full screen',
+      railAria: 'Layers to show', railAll: 'All', railAllTitle: 'Show all layers', layerOnly: 'Show only layer {n}', layerName: 'Layer {n}',
+      hintMouse: 'Drag to rotate · scroll to zoom · click a glowing dot to play',
+      hintTouch: 'Drag to rotate · pinch to zoom · tap a glowing dot to select, tap again to play',
+      confirmGo: 'Play here', cancelSel: 'Cancel', confirmText: '{cell} · flips {n}',
+      nameLabel: 'Leave your name', namePh: 'Name (up to 16 characters)', nameGo: 'Submit', again: 'Play again', viewBoard: 'View board',
+      sound: 'Sound', scoreAria: 'Disc count', setupAria: 'Game settings',
+      lblOpp: 'Opponent', lv0: 'Normal', lv1: 'Fairly strong', lv2: 'Strongest', lv3: 'Weakest', pvp: '2 players', pvpSub: 'Take turns on one device',
+      exSub: 'Tries its hardest to lose. Lose to it and your name stays.',
+      lblSide: 'Your color', blackFirst: 'Black · first', whiteSecond: 'White · second',
+      newGame: 'New game', undo: 'Undo', pending: 'This change takes effect from the next new game',
+      hallLink: 'See the hall of fame ↓',
+      hLayers: 'Layer boards', axisLayers: 'columns A–D · rows 1–4', hLog: 'Moves', axisLog: 'layer·col row +flipped',
+      rulesSummary: 'How to play',
+      rulesHtml: "<li>Black moves first. Trap your opponent's discs between two of yours and they all flip to your color.</li>" +
+        '<li>You can trap in <b>26 directions</b>: along rows, columns and height, plus every diagonal.</li>' +
+        '<li>Glowing dots show where you can play. With no move you pass; when neither side can move, the game ends and more discs wins.</li>' +
+        '<li>The <b>8 corners</b> of the cube can never be trapped, so a corner disc is yours for good. Edge discs flip only along their edge, face discs only within their face.</li>' +
+        "<li>Beat the <b>Strongest</b> or lose to the <b>Weakest</b> to leave your name. The win rate shown is that player's record against that opponent.</li>" +
+        '<li>The <b>Weakest (extra stage)</b> reads as deep as it can to end with fewer discs. If it finishes with more discs than you, you lose, and that counts as a clear.</li>' +
+        '<li>Tap a layer number to show only that layer. Widen the layer gap to see inside the stack.</li>',
+      hallTitle: 'Hall of fame', hallMax: 'Beat the Strongest', hallMin: 'Lost to the Weakest',
+      black: 'Black', white: 'White', you: 'You',
+      turnYou: 'Your turn', turnThinking: '{lv} is thinking', turnAI: "{lv}'s turn", turnColor: "{c}'s turn", turnOver: 'Game over',
+      passToast: '{who}: no legal move, pass',
+      exToast: 'Extra stage: the Weakest tries its hardest to lose. Lose to it and your name stays.',
+      delFail: "Couldn't delete. Please try again in a moment.",
+      empties: '{n} empty', moves: '{n|move}',
+      kOver: 'GAME OVER', kEx: 'EXTRA STAGE CLEAR', kWin: 'WIN · {lv}',
+      tLostMin: 'You lost to the Weakest!', tMinLost: 'The Weakest lost', sMinLost: 'The Weakest lost again. Lose to it and your name stays.',
+      tDraw: 'Draw', sMinDraw: 'So close. Lose to it and your name stays.',
+      tBeatMax: 'You beat the Strongest!', tYouWin: 'You win', sBeatMax: 'Beat the Strongest to leave your name.', tAIWins: '{lv} wins',
+      tBlackWins: 'Black wins', tWhiteWins: 'White wins',
+      recLine: 'Your record vs {lv}: {rate}', rate: '{w|win} in {g|game} · {p}%', rateNone: 'no games yet',
+      nameEmpty: 'Please enter a name', nameSaving: 'Saving…', nameShared: 'Your name has been added', nameLocal: 'Saved on this device',
+      count: '{n}', globalLine: 'Everyone vs {lv}: {w|win} in {g|game} · {p}%', mineLine: 'You vs {lv} (this device): {rate}',
+      loading: 'Loading…', emptyMax: 'Nobody has beaten the Strongest yet', emptyMin: 'Nobody has lost to the Weakest yet',
+      playedBlack: 'Played black', playedWhite: 'Played white',
+      wr: 'win rate {p}%', wrDetail: ' ({w|win} in {g|game})', undoTag: ' · undo ×{n}', localTag: ' · this device',
+      del: 'Delete', delAria: 'Delete the record for {name}', removeAria: 'Remove the record for {name}',
+      noteShared: "The win rate under each name is that player's record against that opponent. Beating the Weakest is the normal result.",
+      noteReadonly: 'This view is read-only. Your records stay on this device.',
+      noteLocal: 'Records are kept on this device.',
+      pendMin: 'You lost to the Weakest. Add your name', pendMax: 'You beat the Strongest. Add your name',
+      cellLong: 'L{z} {cell}', stBlack: 'black', stWhite: 'white', stLegal: 'playable · flips {n}', stEmpty: 'empty',
+      noMoves: 'No moves yet', pass: 'pass',
+    },
+  };
+  let LANG = (() => {
+    try { const s = localStorage.getItem('r444-lang'); if (s === 'ja' || s === 'en') return s; } catch (e) {}
+    if (/^#en\b/i.test(location.hash)) return 'en';
+    if (/^#ja\b/i.test(location.hash)) return 'ja';
+    return /^ja\b/i.test(navigator.language || '') ? 'ja' : 'en';
+  })();
+  function t(k, v) {
+    let s = I18N[LANG][k];
+    if (s == null) s = I18N.ja[k] != null ? I18N.ja[k] : k;
+    if (!v) return s;
+    s = s.replace(/\{(\w+)\|(\w+)\}/g, (_, x, word) => { const n = +v[x]; return n + ' ' + (n === 1 ? word : word + 's'); }); // English plurals
+    return s.replace(/\{(\w+)\}/g, (_, x) => (v[x] != null ? String(v[x]) : ''));
+  }
+  const lvName = l => t('lv' + l);
   const COLS = 'ABCD';
   const cellName = c => `${E.cz(c) + 1}·${COLS[E.cx(c)]}${E.cy(c) + 1}`;
-  const cellLong = c => `${E.cz(c) + 1}層 ${COLS[E.cx(c)]}${E.cy(c) + 1}`;
-  const colorName = p => (p === 1 ? '黒' : '白');
-  const LEVELS = ['普通', 'まあまあ強い', '最強', '最弱'];
+  const cellLong = c => t('cellLong', { z: E.cz(c) + 1, cell: COLS[E.cx(c)] + (E.cy(c) + 1) });
+  const colorName = p => t(p === 1 ? 'black' : 'white');
   const MIN_THINK = [520, 650, 700, 700];
   const reduceMotion = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
   const coarse = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
@@ -1750,7 +1893,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
   function showLegal() { return canHumanAct(); }
   function sideLabel(color) {
     if (G.mode === 'pvp') return colorName(color);
-    return color === G.human ? 'あなた' : LEVELS[G.level];
+    return color === G.human ? t('you') : lvName(G.level);
   }
   function fresh() { return G.mode === 'pvp' ? G.history.length === 0 : !G.history.some(h => h.mover === G.human); }
   function pendingDiffers() {
@@ -1780,7 +1923,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
     clearLive();
   }
   function pct(w, g) { return g ? Math.round(w / g * 100) : 0; }
-  function rateText(v) { return v.g ? `${v.g}戦${v.w}勝・勝率${pct(v.w, v.g)}%` : 'まだ対局なし'; }
+  function rateText(v) { return v.g ? t('rate', { g: v.g, w: v.w, p: pct(v.w, v.g) }) : t('rateNone'); }
   function abandonIfStarted() {
     if (G.mode === 'ai' && G.started && !G.counted && !G.over) {
       recordGame(G.level, false); G.counted = true;
@@ -1856,7 +1999,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
       if (ls.size) {
         G.log.push({ color: next, pass: true });
         G.legal = ls;
-        toast(`${sideLabel(next)}は置ける場所がないのでパス`);
+        toast(t('passToast', { who: sideLabel(next) }));
         Sound.pass();
       } else { G.over = true; G.legal = new Map(); }
     }
@@ -1888,7 +2031,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
   let resultTimer = 0;
   function finish() {
     const [b, w] = E.count(G.board);
-    let kicker = 'GAME OVER · 対局終了', title, sub = '', kind, rec = '';
+    const res = { kicker: ['kOver'], title: null, sub: null, rec: null, b, w };
+    let kind;
     G.pendingClear = G.pendingClear && G.pendingClear.done ? G.pendingClear : null;
     if (G.mode === 'ai') {
       const me = G.human === 1 ? b : w, op = G.human === 1 ? w : b;
@@ -1899,30 +2043,43 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
       const st = stat(G.level);
       const clear = () => { if (!G.pendingClear) G.pendingClear = { level: G.level, me, op, human: G.human, undos: G.undos, games: Math.max(1, st.g), wins: st.w, done: false }; };
       if (G.level === 3) {
-        if (op > me) { kicker = 'EXTRA STAGE CLEAR'; title = '最弱に負けた！'; kind = 'win'; clear(); }
-        else if (op < me) { title = '最弱の負け'; sub = '最弱は今日も負けました。最弱に負けたら名前が残ります。'; kind = 'lose'; }
-        else { title = '引き分け'; sub = 'あと少し。最弱に負けたら名前が残ります。'; kind = 'draw'; }
+        if (op > me) { res.kicker = ['kEx']; res.title = ['tLostMin']; kind = 'win'; clear(); }
+        else if (op < me) { res.title = ['tMinLost']; res.sub = ['sMinLost']; kind = 'lose'; }
+        else { res.title = ['tDraw']; res.sub = ['sMinDraw']; kind = 'draw'; }
       } else if (me > op) {
-        kicker = `WIN · ${LEVELS[G.level]}`; kind = 'win';
-        if (G.level === 2) { title = '最強に勝った！'; clear(); }
-        else { title = 'あなたの勝ち'; sub = '最強に勝つと、名前を残せます。'; }
-      } else if (me < op) { title = `${LEVELS[G.level]}の勝ち`; kind = 'lose'; }
-      else { title = '引き分け'; kind = 'draw'; }
-      rec = st.g ? `対${LEVELS[G.level]}の戦績：${rateText(st)}` : '';
+        res.kicker = ['kWin', { lvl: G.level }]; kind = 'win';
+        if (G.level === 2) { res.title = ['tBeatMax']; clear(); }
+        else { res.title = ['tYouWin']; res.sub = ['sBeatMax']; }
+      } else if (me < op) { res.title = ['tAIWins', { lvl: G.level }]; kind = 'lose'; }
+      else { res.title = ['tDraw']; kind = 'draw'; }
+      if (st.g) res.rec = ['recLine', { lvl: G.level, g: st.g, w: st.w }];
     } else {
-      title = b > w ? '黒の勝ち' : w > b ? '白の勝ち' : '引き分け';
+      res.title = [b > w ? 'tBlackWins' : w > b ? 'tWhiteWins' : 'tDraw'];
       kind = b === w ? 'draw' : 'win';
     }
-    $('resultKicker').textContent = kicker;
-    $('resultTitle').textContent = title;
-    $('resultSub').textContent = sub; $('resultSub').hidden = !sub;
-    $('resultRec').textContent = rec; $('resultRec').hidden = !rec;
-    $('rB').textContent = b; $('rW').textContent = w;
-    if (G.pendingClear) Hall.tab = G.pendingClear.level || 2;
+    G.res = res;
+    renderResult();
     setupNameForm();
     renderHall();
     clearTimeout(resultTimer);
     resultTimer = setTimeout(() => { showResult(); Sound.end(kind); }, 500);
+  }
+  function tr(spec) {
+    if (!spec) return '';
+    const v = Object.assign({}, spec[1] || {});
+    if (v.lvl != null) v.lv = lvName(v.lvl);
+    if (v.g != null) v.rate = rateText({ g: v.g, w: v.w });
+    return t(spec[0], v);
+  }
+  function renderResult() {
+    const r = G.res;
+    if (!r) return;
+    $('resultKicker').textContent = tr(r.kicker);
+    $('resultTitle').textContent = tr(r.title);
+    const sub = tr(r.sub), rec = tr(r.rec);
+    $('resultSub').textContent = sub; $('resultSub').hidden = !sub;
+    $('resultRec').textContent = rec; $('resultRec').hidden = !rec;
+    $('rB').textContent = r.b; $('rW').textContent = r.w;
   }
   function showResult() {
     $('result').hidden = false;
@@ -1939,20 +2096,20 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
     $('nameInput').value = pc.done ? pc.name : (pc.draft != null ? pc.draft : last);
     $('nameInput').disabled = !!pc.done;
     $('nameGo').disabled = !!pc.done || !!pc.saving;
-    $('nameMsg').textContent = pc.done ? pc.msg : '';
+    $('nameMsg').textContent = pc.done ? t(pc.msgKey || 'nameShared') : '';
   }
   async function onNameSubmit(ev) {
     ev.preventDefault();
     const pc = G.pendingClear;
     if (!pc || pc.done || pc.saving) return;
     const name = cleanName($('nameInput').value);
-    if (!name) { $('nameMsg').textContent = '名前を入力してください'; $('nameInput').focus(); return; }
-    pc.saving = true; $('nameGo').disabled = true; $('nameMsg').textContent = '登録しています…';
+    if (!name) { $('nameMsg').textContent = t('nameEmpty'); $('nameInput').focus(); return; }
+    pc.saving = true; $('nameGo').disabled = true; $('nameMsg').textContent = t('nameSaving');
     try { localStorage.setItem(NAME_KEY, name); } catch (e) {}
     const entry = { level: pc.level || 2, name, me: pc.me, op: pc.op, human: pc.human, undos: pc.undos, games: pc.games, wins: pc.wins, at: Date.now() };
     const where = await submitClear(entry);
     pc.saving = false; pc.done = true; pc.name = name;
-    pc.msg = where === 'shared' ? '名前を登録しました' : 'この端末の記録に残しました';
+    pc.msgKey = where === 'shared' ? 'nameShared' : 'nameLocal';
     if (G.pendingClear === pc) setupNameForm();
     renderHall();
   }
@@ -2069,7 +2226,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
       if (!cur.exists) return;
       const list = (cur.data().entries || []).filter(x => !(x.at === e.at && x.name === e.name));
       if (list.length) await ref.set({ entries: list }); else await ref.delete();
-    } catch (err) { toast('削除できませんでした。少し待ってからもう一度試してください'); }
+    } catch (err) { toast(t('delFail')); }
   }
   function fmtDate(t) {
     const d = new Date(t), n = new Date();
@@ -2078,63 +2235,54 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
   function renderHall() {
     const all = Hall.shared.map(e => Object.assign({}, e, { local: false }))
       .concat(Hall.local.map(e => Object.assign({}, e, { local: true })));
-    const T = Hall.tab, counts = { 2: 0, 3: 0 };
-    all.forEach(e => { counts[e.level]++; });
-    document.querySelectorAll('#hallTabs button').forEach(b => {
-      const l = +b.dataset.l;
-      b.setAttribute('aria-selected', String(l === T));
-      b.querySelector('i').textContent = counts[l] ? String(counts[l]) : '';
-    });
-    const list = all.filter(e => e.level === T).sort((a, b) => b.at - a.at).slice(0, 80);
-    $('hallCount').textContent = list.length ? `${counts[T]}件` : '';
-    const gl = Hall.global && Hall.global[T === 3 ? 'min' : 'max'];
-    $('globalRecord').hidden = !(Hall.gas && gl && gl.games);
-    if (gl && gl.games) $('globalRecord').textContent = `みんなの対${LEVELS[T]}：${gl.games}戦${gl.wins}勝・勝率${(gl.wins / gl.games * 100).toFixed(1)}%`;
-    $('myRecord').textContent = `あなたの対${LEVELS[T]}（この端末）：${rateText(stat(T))}`;
-    const ol = $('hallList');
-    ol.textContent = '';
-    if (!list.length) {
-      const li = document.createElement('li'); li.className = 'empty';
-      li.textContent = Hall.status === 'loading' ? '読み込み中…' : T === 3 ? 'まだ最弱に負けた人はいません' : 'まだ最強に勝った人はいません';
-      ol.appendChild(li);
-    }
-    for (const e of list) {
-      const li = document.createElement('li');
-      const dot = document.createElement('span'); dot.className = 'hc ' + (e.human === 2 ? 'w' : 'k');
-      dot.title = e.human === 2 ? '白で対局' : '黒で対局';
-      const box = document.createElement('div'); box.className = 'hb';
-      const nm = document.createElement('span'); nm.className = 'hn'; nm.textContent = e.name; nm.title = e.name;
-      const meta = document.createElement('span'); meta.className = 'hm';
-      const rate = document.createElement('b'); rate.textContent = `勝率${pct(e.wins, e.games)}%`;
-      meta.append(`${e.me}–${e.op} · `, rate, `（${e.games}戦${e.wins}勝）` + (e.undos > 0 ? ` · 待った${e.undos}` : '') + (e.local ? ' · この端末' : ''));
-      box.append(nm, meta);
-      const dt = document.createElement('span'); dt.className = 'hd'; dt.textContent = fmtDate(e.at);
-      li.append(dot, box, dt);
-      if (e.local || Hall.owner) {
-        const key = (e.uid || 'local') + ':' + e.at + ':' + e.name;
-        const x = document.createElement('button'); x.type = 'button'; x.className = 'hx';
-        const armed = Hall.armed === key;
-        x.textContent = armed ? '削除' : '×';
-        if (armed) x.classList.add('armed');
-        x.setAttribute('aria-label', armed ? `${e.name}の記録を削除する` : `${e.name}の記録を消す`);
-        x.addEventListener('click', () => {
-          if (Hall.armed === key) { Hall.armed = ''; removeEntry(e); }
-          else { Hall.armed = key; renderHall(); setTimeout(() => { if (Hall.armed === key) { Hall.armed = ''; renderHall(); } }, 3000); }
-        });
-        li.appendChild(x);
+    for (const T of [2, 3]) {
+      const list = all.filter(e => e.level === T).sort((a, b) => b.at - a.at).slice(0, 100);
+      $('hallCnt' + T).textContent = list.length ? t('count', { n: list.length }) : '';
+      const gl = Hall.global && Hall.global[T === 3 ? 'min' : 'max'];
+      const gEl = $('hallGlobal' + T);
+      gEl.hidden = !(Hall.gas && gl && gl.games);
+      if (gl && gl.games) gEl.textContent = t('globalLine', { lv: lvName(T), g: gl.games, w: gl.wins, p: (gl.wins / gl.games * 100).toFixed(1) });
+      $('hallMine' + T).textContent = t('mineLine', { lv: lvName(T), rate: rateText(stat(T)) });
+      const ol = $('hallList' + T);
+      ol.textContent = '';
+      if (!list.length) {
+        const li = document.createElement('li'); li.className = 'empty';
+        li.textContent = Hall.status === 'loading' ? t('loading') : t(T === 3 ? 'emptyMin' : 'emptyMax');
+        ol.appendChild(li);
       }
-      ol.appendChild(li);
+      for (const e of list) {
+        const li = document.createElement('li');
+        const dot = document.createElement('span'); dot.className = 'hc ' + (e.human === 2 ? 'w' : 'k');
+        dot.title = t(e.human === 2 ? 'playedWhite' : 'playedBlack');
+        const box = document.createElement('div'); box.className = 'hb';
+        const nm = document.createElement('span'); nm.className = 'hn'; nm.textContent = e.name; nm.title = e.name;
+        const meta = document.createElement('span'); meta.className = 'hm';
+        const rate = document.createElement('b'); rate.textContent = t('wr', { p: pct(e.wins, e.games) });
+        meta.append(`${e.me}–${e.op} · `, rate, t('wrDetail', { g: e.games, w: e.wins }) + (e.undos > 0 ? t('undoTag', { n: e.undos }) : '') + (e.local ? t('localTag') : ''));
+        box.append(nm, meta);
+        const dt = document.createElement('span'); dt.className = 'hd'; dt.textContent = fmtDate(e.at);
+        li.append(dot, box, dt);
+        if (e.local || Hall.owner) {
+          const key = (e.uid || 'local') + ':' + e.at + ':' + e.name;
+          const x = document.createElement('button'); x.type = 'button'; x.className = 'hx';
+          const armed = Hall.armed === key;
+          x.textContent = armed ? t('del') : '×';
+          if (armed) x.classList.add('armed');
+          x.setAttribute('aria-label', t(armed ? 'delAria' : 'removeAria', { name: e.name }));
+          x.addEventListener('click', () => {
+            if (Hall.armed === key) { Hall.armed = ''; removeEntry(e); }
+            else { Hall.armed = key; renderHall(); setTimeout(() => { if (Hall.armed === key) { Hall.armed = ''; renderHall(); } }, 3000); }
+          });
+          li.appendChild(x);
+        }
+        ol.appendChild(li);
+      }
     }
-    const notes = {
-      loading: '',
-      shared: T === 3 ? '名前の下の勝率は、その人が最弱と戦った成績です（勝つのが当たり前の相手です）。' : '名前の下の勝率は、その人が最強と戦った成績です。',
-      readonly: 'この表示では一覧を見るだけです。あなたの記録はこの端末に残ります。',
-      local: '記録はこの端末に残ります。',
-    };
+    const notes = { loading: '', shared: t('noteShared'), readonly: t('noteReadonly'), local: t('noteLocal') };
     $('hallNote').textContent = notes[Hall.status] || '';
-    const pc = G.pendingClear;
-    $('hallPending').hidden = !(pc && !pc.done && $('result').hidden);
-    if (pc) $('hallPending').textContent = pc.level === 3 ? '最弱に負けました。名前を登録する' : '最強に勝ちました。名前を登録する';
+    const pc = G.pendingClear, pb = $('hallPending');
+    pb.hidden = !(pc && !pc.done && $('result').hidden);
+    if (pc) pb.textContent = t(pc.level === 3 ? 'pendMin' : 'pendMax');
   }
 
   // ---------------- fullscreen ----------------
@@ -2144,8 +2292,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
     const pseudo = appEl.classList.contains('pseudo-fs'), on = pseudo || !!fsElement();
     const b = $('fsBtn');
     b.setAttribute('aria-pressed', String(on));
-    b.setAttribute('aria-label', on ? '全画面を終了' : '全画面表示');
-    b.title = on ? '全画面を終了 (F)' : '全画面表示 (F)';
+    b.setAttribute('aria-label', t(on ? 'fsExit' : 'fsEnter'));
+    b.title = t(on ? 'fsExit' : 'fsEnter') + ' (F)';
     $('fsIn').toggleAttribute('hidden', on); $('fsOut').toggleAttribute('hidden', !on);
     document.body.classList.toggle('lock', pseudo);
   }
@@ -2183,7 +2331,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
   function select(c) {
     UI.sel = c;
     setPreview(c);
-    $('confirmText').textContent = `${cellLong(c)} · ${G.legal.get(c).length}枚返る`;
+    $('confirmText').textContent = t('confirmText', { cell: cellLong(c), n: G.legal.get(c).length });
     $('confirm').hidden = false;
   }
   function clearSel() { UI.sel = -1; $('confirm').hidden = true; }
@@ -2224,8 +2372,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
       const box = document.createElement('div'); box.className = 'mini';
       const head = document.createElement('button');
       head.type = 'button'; head.className = 'mini-head'; head.dataset.layer = z;
-      head.textContent = `${z + 1}層`; head.setAttribute('aria-pressed', 'false');
-      head.title = `${z + 1}層だけを表示`;
+      head.textContent = t('layerName', { n: z + 1 }); head.setAttribute('aria-pressed', 'false');
+      head.title = t('layerOnly', { n: z + 1 });
       const grid = document.createElement('div'); grid.className = 'mini-grid';
       for (let y = 0; y < 4; y++) for (let x = 0; x < 4; x++) {
         const c = E.idx(x, y, z);
@@ -2252,7 +2400,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
       if (c === UI.preview) cls.push('sel', G.turn === 1 ? 'gk' : 'gw');
       const name = cls.join(' ');
       if (el.className !== name) el.className = name;
-      const state = v === 1 ? '黒' : v === 2 ? '白' : legal ? `置ける・${G.legal.get(c).length}枚返る` : '空き';
+      const state = v === 1 ? t('stBlack') : v === 2 ? t('stWhite') : legal ? t('stLegal', { n: G.legal.get(c).length }) : t('stEmpty');
       const label = `${cellLong(c)} ${state}`;
       if (el.getAttribute('aria-label') !== label) el.setAttribute('aria-label', label);
     }
@@ -2270,18 +2418,18 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
     $('chipB').textContent = b; $('chipW').textContent = w;
     $('barB').style.width = (b / E.N * 100) + '%';
     $('barW').style.width = (w / E.N * 100) + '%';
-    $('empties').textContent = `空き ${E.N - b - w}`;
-    $('moveNo').textContent = `${G.log.filter(m => !m.pass).length}手`;
+    $('empties').textContent = t('empties', { n: E.N - b - w });
+    $('moveNo').textContent = t('moves', { n: G.log.filter(m => !m.pass).length });
     $('whoB').textContent = sideLabel(1); $('whoW').textContent = sideLabel(2);
     $('sideB').classList.toggle('on', !G.over && G.turn === 1);
     $('sideW').classList.toggle('on', !G.over && G.turn === 2);
 
     // turn pill
     let text;
-    if (G.over) text = '対局終了';
-    else if (G.thinking) text = `${LEVELS[G.level]}が考え中`;
-    else if (G.mode === 'ai') text = G.turn === G.human ? 'あなたの番です' : `${LEVELS[G.level]}の番`;
-    else text = `${colorName(G.turn)}の番です`;
+    if (G.over) text = t('turnOver');
+    else if (G.thinking) text = t('turnThinking', { lv: lvName(G.level) });
+    else if (G.mode === 'ai') text = G.turn === G.human ? t('turnYou') : t('turnAI', { lv: lvName(G.level) });
+    else text = t('turnColor', { c: colorName(G.turn) });
     $('turnText').textContent = text;
     $('turnDisc').className = 'disc-icon ' + (G.turn === 1 ? 'k' : 'w');
     $('turnDisc').hidden = G.over;
@@ -2304,11 +2452,11 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
   }
   function refreshLog() {
     const ol = $('moves');
-    if (!G.log.length) { ol.innerHTML = '<li class="empty">まだ一手も打たれていません</li>'; return; }
+    if (!G.log.length) { ol.innerHTML = '<li class="empty">' + t('noMoves') + '</li>'; return; }
     let n = 0;
     const parts = G.log.map((m, i) => {
       const dot = `<span class="dot ${m.color === 1 ? 'k' : 'w'}"></span>`;
-      if (m.pass) return `<li class="pass"><span class="n"></span>${dot}パス</li>`;
+      if (m.pass) return `<li class="pass"><span class="n"></span>${dot}${t('pass')}</li>`;
       n++;
       const cur = i === G.log.length - 1 || (i === G.log.length - 2 && G.log[G.log.length - 1].pass);
       return `<li${cur ? ' class="cur"' : ''}><span class="n">${n}</span>${dot}<span class="c">${cellName(m.cell)}</span><span class="f">+${m.flips}</span></li>`;
@@ -2355,11 +2503,12 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
       const wasEx = G.pend.mode === 'ai' && G.pend.level === 3;
       if (o.dataset.v === 'pvp') G.pend.mode = 'pvp';
       else { G.pend.mode = 'ai'; G.pend.level = +o.dataset.v; if (G.pend.level >= 2) Hall.tab = G.pend.level; renderHall(); }
-      if (G.pend.mode === 'ai' && G.pend.level === 3 && !wasEx) toast('エクストラステージ：最弱は全力で負けにきます。最弱に負けたら名前が残ります');
+      if (G.pend.mode === 'ai' && G.pend.level === 3 && !wasEx) toast(t('exToast'));
       if (pendingDiffers() && fresh()) newGame(); else refresh();
     });
     $('hallPending').addEventListener('click', showResult);
-    $('hallTabs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { Hall.tab = +b.dataset.l; Hall.armed = ''; renderHall(); } });
+    $('langBtn').addEventListener('click', () => setLang(LANG === 'ja' ? 'en' : 'ja'));
+    $('hallLink').addEventListener('click', e => { e.preventDefault(); $('hall').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' }); });
     $('nameForm').addEventListener('submit', onNameSubmit);
     $('nameInput').addEventListener('input', e => { if (G.pendingClear && !G.pendingClear.done) G.pendingClear.draft = e.target.value; });
     $('fsBtn').addEventListener('click', toggleFullscreen);
@@ -2383,7 +2532,6 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
       else if ((e.key === 'f' || e.key === 'F') && !e.metaKey && !e.ctrlKey && !e.altKey) toggleFullscreen();
       else if (/^[0-6]$/.test(e.key) && !e.metaKey && !e.ctrlKey && !e.altKey) setFocus(e.key === '0' ? -1 : +e.key - 1);
     });
-    if (coarse) $('hint').textContent = 'ドラッグで回転・ピンチで拡大・光る点をタップで選び、もう一度タップで置く';
   }
 
   // ---------------- boot & live updates ----------------
@@ -2415,9 +2563,31 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
     if (G.over) { const keep = G.pendingClear; finish(); if (keep) { G.pendingClear = keep; setupNameForm(); } }
     maybeAI();
   }
+  function applyStatic() {
+    document.documentElement.lang = LANG;
+    document.title = t('title');
+    document.querySelectorAll('[data-t]').forEach(el => { el.textContent = t(el.dataset.t); });
+    document.querySelectorAll('[data-th]').forEach(el => { el.innerHTML = t(el.dataset.th); });
+    document.querySelectorAll('[data-ta]').forEach(el => el.dataset.ta.split(';').forEach(pair => {
+      const i = pair.indexOf(':'); el.setAttribute(pair.slice(0, i), t(pair.slice(i + 1)));
+    }));
+    document.querySelectorAll('#rail button').forEach(b => { const z = +b.dataset.layer; if (z >= 0) b.title = t('layerOnly', { n: z + 1 }); });
+    miniBoxes.forEach((m, z) => { if (m) { m.head.textContent = t('layerName', { n: z + 1 }); m.head.title = t('layerOnly', { n: z + 1 }); } });
+    $('hint').textContent = t(coarse ? 'hintTouch' : 'hintMouse');
+    const lb = $('langBtn'); lb.textContent = t('langBtn'); lb.setAttribute('aria-label', t('langAria')); lb.title = t('langAria');
+    lb.lang = LANG === 'ja' ? 'en' : 'ja';
+    paintFs();
+  }
+  function setLang(l) {
+    LANG = l;
+    try { localStorage.setItem('r444-lang', l); } catch (e) {}
+    applyStatic(); refresh(); renderHall(); renderResult(); setupNameForm();
+    if (UI.sel >= 0 && G.legal.has(UI.sel)) select(UI.sel);
+  }
   function start(data) {
     buildMinis();
     bind();
+    applyStatic();
     makeWorker();
     if (G.pend.level >= 2) Hall.tab = G.pend.level;
     initHall();
