@@ -11,6 +11,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23103a2b'/%3E%3Ccircle cx='24' cy='26' r='12' fill='%23141618'/%3E%3Ccircle cx='40' cy='40' r='12' fill='%23f2f1ea'/%3E%3C/svg%3E">
 <style>:root{padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>立体リバーシ 4×4×4</title>
+<script src="/config.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=IBM+Plex+Mono:wght@500&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
@@ -53,8 +54,17 @@ body {
 button { font: inherit; color: inherit; }
 button:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
 
+/* site bar (same on every game of やたら楽しい数学); full screen covers it */
+.sitebar { display: flex; align-items: center; gap: 12px; height: 46px; padding: 0 16px; border-bottom: 1px solid var(--line-soft); background: var(--felt-deep); }
+.sitebar a { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); text-decoration: none; font-weight: 700; font-size: 14px; min-width: 0; }
+.sitebar a span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sitebar a:hover span { text-decoration: underline; }
+.sitebar a:focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; border-radius: 6px; }
+.sitebar svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.sitebar small { font-weight: 500; color: var(--ink-soft); }
+
 .app {
-  height: 100%;
+  height: calc(100% - 46px);
   display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 16px;
   padding: 16px;
 }
@@ -277,6 +287,18 @@ input[type="range"] { width: 92px; accent-color: var(--brass); }
 .moves .pass { color: var(--ink-soft); }
 .moves .empty { grid-column: 1 / -1; font-family: var(--body); color: var(--ink-soft); font-size: 13px; }
 
+.opt.wide { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; align-items: baseline; column-gap: 10px; }
+.online { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; padding: 12px; border-radius: 14px; border: 1px solid var(--line); }
+.online .label { margin-top: 2px; }
+.online input {
+  min-width: 0; padding: 9px 12px; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--felt-deep); color: var(--ink); font: inherit; font-size: 15px;
+}
+.online input:focus { border-color: var(--brass); outline: none; }
+.online-btns { display: flex; gap: 8px; }
+.online-btns .primary { flex: 1; }
+.online-status { margin: 0; font-size: 12.5px; color: var(--ink-soft); line-height: 1.55; }
+.online-status.on { color: var(--brass); font-weight: 700; }
 .opt.ex {
   grid-column: 1 / -1; border-style: dashed; border-color: var(--brass);
   flex-direction: row; flex-wrap: wrap; align-items: baseline; column-gap: 10px;
@@ -394,6 +416,10 @@ body.lock { overflow: hidden; }
 <body>
 
 
+<nav class="sitebar" aria-label="やたら楽しい数学">
+  <a href="https://yataramath.github.io/" target="_top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg><span><span data-t="siteName">やたら楽しい数学</span> <small data-t="siteList">ゲーム一覧</small></span></a>
+</nav>
+
 <div class="app">
   <section class="stage" id="stage" aria-label="立体盤面" data-ta="aria-label:stageAria">
     <canvas id="scene" aria-hidden="true"></canvas>
@@ -500,10 +526,19 @@ body.lock { overflow: hidden; }
           <button class="opt" type="button" data-v="1"><b data-t="lv1">まあまあ強い</b><span class="pips"><i class="on"></i><i class="on"></i><i></i></span></button>
           <button class="opt" type="button" data-v="2"><b data-t="lv2">最強</b><span class="pips"><i class="on"></i><i class="on"></i><i class="on"></i></span></button>
           <button class="opt" type="button" data-v="pvp"><b data-t="pvp">2人で</b><small data-t="pvpSub">1台で交代に打つ</small></button>
+          <button class="opt wide" type="button" data-v="online"><b data-t="online">オンライン</b><small data-t="onlineSub">部屋の名前を合わせて、離れた人と対戦</small></button>
           <button class="opt ex" type="button" data-v="3"><span class="ex-tag">EXTRA STAGE</span><b data-t="lv3">最弱</b><small data-t="exSub">全力で負けにくる。最弱に負けたら名前が残る</small></button>
         </div>
       </div>
-      <div class="field">
+      <div class="online" id="onlineBox" hidden>
+        <label class="label" for="roomName" data-t="roomLbl">部屋の名前（合言葉）</label>
+        <input id="roomName" type="text" maxlength="24" autocomplete="off" placeholder="例：りったい123" data-ta="placeholder:roomPh">
+        <label class="label" for="nickName" data-t="nickLbl">あなたの名前</label>
+        <input id="nickName" type="text" maxlength="16" autocomplete="nickname" placeholder="ニックネーム" data-ta="placeholder:nickPh">
+        <div class="online-btns"><button class="btn primary" id="joinBtn" type="button" data-t="join">部屋に入る</button><button class="btn" id="leaveBtn" type="button" data-t="leave" disabled>出る</button></div>
+        <p class="online-status" id="onlineStatus" aria-live="polite"></p>
+      </div>
+      <div class="field" id="sideField">
         <span class="label" id="lblSide" data-t="lblSide">あなたの石</span>
         <div class="sides" id="sides" role="group" aria-labelledby="lblSide">
           <button class="opt" type="button" data-v="1"><span class="disc-icon k"></span><b data-t="blackFirst">黒・先手</b></button>
@@ -1214,6 +1249,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
     } catch (e) { return rid(16); }
   })();
   const $ = id => document.getElementById(id);
+  // まとめ記録係（オンライン対戦の部屋）。入口サイトの config.js から読む
+  const ROOM_URL = (window.YATARA && window.YATARA.recordUrl) || '';
   // ---------------- language: 日本語 / English ----------------
   const I18N = {
     ja: {
@@ -1238,6 +1275,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
         '<li>挟める向きは縦・横・高さと、その斜めを合わせた<b>26方向</b>。</li>' +
         '<li>置ける場所は光る点で示されます。置ける場所がなければパス、両者とも置けなくなったら終局で、石の多いほうが勝ちです。</li>' +
         '<li>立体の角<b>8か所</b>は、どの向きからも挟めないので一度取れば二度と返りません。辺の石は辺に沿ってしか、面の石は面の中でしか返りません。</li>' +
+        '<li><b>オンライン</b>：2人で同じ部屋の名前を入れると対戦できます。先に入った人が黒（先手）です。</li>' +
         '<li><b>最強</b>に勝つか、<b>最弱</b>に負けると、名前を残せます。一覧の勝率は、その人がその相手と戦った成績です。</li>' +
         '<li><b>最弱（エクストラステージ）</b>は、自分の石が少なくなるように全力で読んで負けにきます。最弱の石のほうが多く残ったら、あなたの負け＝クリアです。</li>' +
         '<li>層の数字を押すとその層だけを表示します。「層の間隔」で積み重ねを広げると、内側が見やすくなります。</li>',
@@ -1266,6 +1304,22 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
       pendMin: '最弱に負けました。名前を登録する', pendMax: '最強に勝ちました。名前を登録する',
       cellLong: '{z}層 {cell}', stBlack: '黒', stWhite: '白', stLegal: '置ける・{n}枚返る', stEmpty: '空き',
       noMoves: 'まだ一手も打たれていません', pass: 'パス',
+      siteName: 'やたら楽しい数学', siteList: 'ゲーム一覧',
+      online: 'オンライン', onlineSub: '部屋の名前を合わせて、離れた人と対戦',
+      roomLbl: '部屋の名前（合言葉）', roomPh: '例：りったい123', nickLbl: 'あなたの名前', nickPh: 'ニックネーム', join: '部屋に入る', leave: '出る',
+      netIntro: '同じ部屋の名前を入れた2人で対戦できます。先に入った人が黒（先手）です。',
+      netOff: 'オンライン対戦は準備中です（記録係のURLが入っていません）。', netJoining: '部屋に入っています…',
+      netWaiting: '部屋「{room}」で相手を待っています。相手にこの部屋の名前を伝えてください。あなたは黒です。',
+      netPlaying: '部屋「{room}」で{who}さんと対局中。あなたは{c}です。',
+      netOver: '部屋「{room}」の対局が終わりました。もう一局するときは、2人とも「部屋に入る」を押してください。',
+      netLeft: '部屋「{room}」の相手が部屋を出ました。', netLeftSelf: '部屋を出ました。',
+      netGone: 'この部屋では新しい対局が始まりました。入るときはもう一度「部屋に入る」を押してください。',
+      netNoName: '部屋の名前を入れてください。', netFail: 'つながりませんでした。少し待ってからもう一度押してください。',
+      netRetry: '通信が不安定です。手を送り直しています…', netResync: '局面を部屋に合わせ直しました。',
+      netBadMove: '相手の手を読み込めませんでした。部屋に入り直してください。', netSendFail: '手を送れませんでした。部屋に入り直してください。',
+      netAway: '部屋「{room}」の相手が部屋を出ました。相手が入り直すと続きから打てます。新しい相手と始めるときは、もう一度「部屋に入る」を押してください。', turnAway: '相手が部屋を出ています',
+      opp: '相手', turnWait: '相手を待っています', turnJoin: '部屋に入ると始まります', turnOpp: '{who}の番', turnOppLeft: '相手が部屋を出ました',
+      tOppWins: '{who}の勝ち', sRematch: '「もう一局」を押して、相手も「部屋に入る」を押すと次の対局が始まります。',
     },
     en: {
       title: '3D Reversi 4×4×4', brand: '3D Reversi', dims: '4 × 4 × 4 · 64 cells · 26 directions',
@@ -1289,6 +1343,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
         '<li>You can trap in <b>26 directions</b>: along rows, columns and height, plus every diagonal.</li>' +
         '<li>Glowing dots show where you can play. With no move you pass; when neither side can move, the game ends and more discs wins.</li>' +
         '<li>The <b>8 corners</b> of the cube can never be trapped, so a corner disc is yours for good. Edge discs flip only along their edge, face discs only within their face.</li>' +
+        '<li><b>Online</b>: two players who enter the same room name play each other. Whoever joins first plays black.</li>' +
         "<li>Beat the <b>Strongest</b> or lose to the <b>Weakest</b> to leave your name. The win rate shown is that player's record against that opponent.</li>" +
         '<li>The <b>Weakest (extra stage)</b> reads as deep as it can to end with fewer discs. If it finishes with more discs than you, you lose, and that counts as a clear.</li>' +
         '<li>Tap a layer number to show only that layer. Widen the layer gap to see inside the stack.</li>',
@@ -1317,6 +1372,22 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
       pendMin: 'You lost to the Weakest. Add your name', pendMax: 'You beat the Strongest. Add your name',
       cellLong: 'L{z} {cell}', stBlack: 'black', stWhite: 'white', stLegal: 'playable · flips {n}', stEmpty: 'empty',
       noMoves: 'No moves yet', pass: 'pass',
+      siteName: 'Yatara Math', siteList: 'all games',
+      online: 'Online', onlineSub: 'Enter the same room name to play someone far away',
+      roomLbl: 'Room name (shared password)', roomPh: 'e.g. cube123', nickLbl: 'Your name', nickPh: 'Nickname', join: 'Join room', leave: 'Leave',
+      netIntro: 'Two players who enter the same room name play each other. Whoever joins first plays black (first).',
+      netOff: 'Online play is not set up yet.', netJoining: 'Joining the room…',
+      netWaiting: 'Waiting in room “{room}”. Tell your opponent this room name. You play black.',
+      netPlaying: 'Playing {who} in room “{room}”. You are {c}.',
+      netOver: 'The game in room “{room}” is over. To play again, both players press “Join room”.',
+      netLeft: 'Your opponent left room “{room}”.', netLeftSelf: 'You left the room.',
+      netGone: 'A new game has started in this room. Press “Join room” to join it.',
+      netNoName: 'Please enter a room name.', netFail: "Couldn't connect. Please try again in a moment.",
+      netRetry: 'Connection is unstable. Resending your move…', netResync: 'Re-synced the board with the room.',
+      netBadMove: "Couldn't read your opponent's move. Please rejoin the room.", netSendFail: "Couldn't send your move. Please rejoin the room.",
+      netAway: 'Your opponent left room “{room}”. If they join again, the game continues. To start over with someone new, press “Join room” again.', turnAway: 'Your opponent is away',
+      opp: 'Opponent', turnWait: 'Waiting for an opponent', turnJoin: 'Join a room to start', turnOpp: "{who}'s turn", turnOppLeft: 'Your opponent left',
+      tOppWins: '{who} wins', sRematch: 'Press “Play again”; the next game starts when your opponent joins too.',
     },
   };
   let LANG = (() => {
@@ -1350,6 +1421,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
     pend: { mode: 'ai', human: 1, level: 1 },
     busy: false, thinking: false, gameId: 0,
     undos: 0, pendingClear: null, started: false, counted: false, gameKey: '', resultPost: null,
+    online: null,
   };
   const UI = { focus: -1, spread: 1.9, preview: -1, sel: -1, pointer: coarse ? 'touch' : 'mouse' };
 
@@ -1889,13 +1961,20 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
 
   // ---------------- game flow ----------------
   function isAITurn() { return G.mode === 'ai' && !G.over && G.turn !== G.human; }
-  function canHumanAct() { return !G.over && !G.busy && !isAITurn(); }
+  const netPlaying = () => !!(G.online && G.online.status === 'playing');
+  const oppAway = () => !!(G.online && G.online.players.some(p => p.left && p.seat !== G.online.seat));
+  function canHumanAct() { return !G.over && !G.busy && !isAITurn() && (G.mode !== 'online' || (netPlaying() && G.turn === G.human)); }
+  function oppNick() {
+    const o = G.online, p = o && o.players.find(x => x.seat !== o.seat);
+    return p && p.nick ? p.nick : t('opp');
+  }
   function showLegal() { return canHumanAct(); }
   function sideLabel(color) {
-    if (G.mode === 'pvp') return colorName(color);
+    if (G.mode === 'pvp' || (G.mode === 'online' && !G.online)) return colorName(color);
+    if (G.mode === 'online') return color === G.human ? t('you') : oppNick();
     return color === G.human ? t('you') : lvName(G.level);
   }
-  function fresh() { return G.mode === 'pvp' ? G.history.length === 0 : !G.history.some(h => h.mover === G.human); }
+  function fresh() { return G.mode === 'pvp' || G.mode === 'online' ? G.history.length === 0 : !G.history.some(h => h.mover === G.human); }
   function pendingDiffers() {
     return G.pend.mode !== G.mode || (G.pend.mode === 'ai' && (G.pend.human !== G.human || G.pend.level !== G.level));
   }
@@ -1935,11 +2014,16 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
     clearLive();
   }
 
-  function newGame() {
+  // rv: room view from the record keeper (online game), info: { key, room }
+  function newGame(rv, info) {
     cancelAI();
     abandonIfStarted();
+    if (!rv && G.online) leaveRoom(true);
+    UI.netNote = null;
     G.gameId++;
-    G.mode = G.pend.mode; G.human = G.pend.human; G.level = G.pend.level;
+    if (rv) G.pend.mode = 'online';
+    G.mode = G.pend.mode; G.human = rv ? (rv.seat === 2 ? 2 : 1) : G.mode === 'online' ? 1 : G.pend.human; G.level = G.pend.level;
+    G.online = rv ? { key: info.key, room: info.room, seat: rv.seat, status: rv.status, players: rv.players, moves: [], applied: 0 } : null;
     G.board = E.initialBoard(); G.turn = 1; G.last = -1; G.over = false;
     G.history = []; G.log = []; G.busy = false;
     G.undos = 0; G.pendingClear = null; G.started = false; G.counted = false;
@@ -2005,10 +2089,11 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
     }
     refresh();
     if (G.over) finish(); else maybeAI();
+    if (G.mode === 'online') pump();
   }
 
   function canUndo() {
-    if (G.over) return false;
+    if (G.over || G.mode === 'online') return false;
     if (G.busy && !G.thinking) return false;
     if (!G.history.length) return false;
     return G.mode === 'pvp' || G.history.some(h => h.mover === G.human);
@@ -2053,6 +2138,12 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
       } else if (me < op) { res.title = ['tAIWins', { lvl: G.level }]; kind = 'lose'; }
       else { res.title = ['tDraw']; kind = 'draw'; }
       if (st.g) res.rec = ['recLine', { lvl: G.level, g: st.g, w: st.w }];
+    } else if (G.mode === 'online') {
+      const me = G.human === 1 ? b : w, op = G.human === 1 ? w : b;
+      res.title = me > op ? ['tYouWin'] : me < op ? ['tOppWins', { who: oppNick() }] : ['tDraw'];
+      res.sub = ['sRematch'];
+      kind = me > op ? 'win' : me < op ? 'lose' : 'draw';
+      if (G.online) G.online.status = 'over';
     } else {
       res.title = [b > w ? 'tBlackWins' : w > b ? 'tWhiteWins' : 'tDraw'];
       kind = b === w ? 'draw' : 'win';
@@ -2285,6 +2376,134 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
     if (pc) pb.textContent = t(pc.level === 3 ? 'pendMin' : 'pendMax');
   }
 
+  // ---------------- online rooms (through the shared record keeper, by polling) ----------------
+  let pollTimer = 0, joining = false;
+  const roomLocked = () => !!(G.online && G.online.status !== 'over' && !G.over && !oppAway());
+  const movesMade = () => G.log.filter(m => !m.pass).length;
+  function netNote(k, v) { UI.netNote = k ? [k, v || null] : null; renderNet(); }
+  function renderNet() {
+    const o = G.online, show = G.pend.mode === 'online' || !!o;
+    $('onlineBox').hidden = !show;
+    $('joinBtn').disabled = !ROOM_URL || roomLocked() || joining;
+    $('leaveBtn').disabled = !o;
+    if (!show) return;
+    let k, v = { room: o ? o.room : '' }, hl = false;
+    if (UI.netNote) { k = UI.netNote[0]; v = Object.assign(v, UI.netNote[1]); }
+    else if (!ROOM_URL) k = 'netOff';
+    else if (!o) k = 'netIntro';
+    else if (o.status === 'waiting') { k = 'netWaiting'; hl = true; }
+    else if (o.status === 'playing' && oppAway() && !G.over) k = 'netAway';
+    else if (o.status === 'playing' && !G.over) { k = 'netPlaying'; v.who = oppNick(); v.c = colorName(G.human); hl = true; }
+    else k = 'netOver';
+    const el = $('onlineStatus'), msg = UI.netNote && UI.netNote[1] && UI.netNote[1].raw ? UI.netNote[1].raw : t(k, v);
+    if (el.textContent !== msg) el.textContent = msg;
+    el.classList.toggle('on', hl);
+  }
+  async function roomApi(body) {
+    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 15000);
+    try {
+      const r = await fetch(ROOM_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body), signal: ctl.signal });
+      return await r.json();
+    } finally { clearTimeout(timer); }
+  }
+  async function joinRoom() {
+    const room = $('roomName').value.trim(), nick = $('nickName').value.trim();
+    if (!ROOM_URL || joining) return;
+    if (!room) { netNote('netNoName'); $('roomName').focus(); return; }
+    try { localStorage.setItem('yatara:lastName', JSON.stringify(nick)); localStorage.setItem('yatara:rittai:room', JSON.stringify(room)); } catch (e) {}
+    const ended = !!(G.online && G.online.room === room && (G.over || oppAway()));
+    joining = true; netNote('netJoining');
+    try {
+      const j = await roomApi({ type: 'room_join', game: 'rittai-reversi', room, variant: 'std', device: DEVICE, nick, ended });
+      joining = false;
+      if (!j.ok) { netNote('x', { raw: j.error || t('netFail') }); return; }
+      newGame(j.room, { key: j.key, room });
+      syncRoom(j.room);
+      schedulePoll(400);
+    } catch (e) { joining = false; netNote('netFail'); }
+  }
+  function syncRoom(rv) {
+    const o = G.online; if (!o) return;
+    if (!rv.seat || rv.moves.length < o.moves.length) { o.status = 'over'; netNote('netGone'); refresh(); return; }
+    if (rv.status !== o.status) UI.netNote = null;
+    o.status = rv.status; o.players = rv.players; o.moves = rv.moves;
+    pump();
+    if (G.over) o.status = 'over';
+    refresh();
+  }
+  // apply the room's moves that are not on our board yet (one animated move at a time; catching up is instant)
+  function instantMove(c) {
+    const flips = G.legal.get(c), mover = G.turn;
+    G.history.push({ board: G.board.slice(), turn: G.turn, last: G.last, logLen: G.log.length, mover });
+    G.board[c] = mover; for (const f of flips) G.board[f] = mover;
+    G.last = c; G.log.push({ color: mover, cell: c, flips: flips.length });
+    const next = 3 - G.turn, ln = E.legal(G.board, next);
+    if (ln.size) { G.turn = next; G.legal = ln; }
+    else {
+      const ls = E.legal(G.board, G.turn);
+      if (ls.size) { G.log.push({ color: next, pass: true }); G.legal = ls; }
+      else { G.over = true; G.legal = new Map(); }
+    }
+  }
+  function pump() {
+    const o = G.online; if (!o || G.busy) return;
+    let caught = false;
+    while (o.applied < o.moves.length) {
+      const i = o.applied, mv = o.moves[i];
+      o.applied++;
+      if (i < movesMade() || G.over) continue;           // already on our board
+      if (typeof mv.m !== 'number' || !G.legal.has(mv.m)) { netNote('netBadMove'); continue; }
+      if (o.applied < o.moves.length) { instantMove(mv.m); caught = true; continue; }
+      if (caught) { V.rebuild(); caught = false; }
+      doMove(mv.m);                                       // animated; advance() calls pump() again
+      return;
+    }
+    if (caught) { V.rebuild(); refresh(); if (G.over) finish(); }
+  }
+  function schedulePoll(ms) {
+    clearTimeout(pollTimer);
+    pollTimer = setTimeout(async () => {
+      const o = G.online, gid = G.gameId;
+      if (!o || o.status === 'over') return;
+      try {
+        const res = await fetch(`${ROOM_URL}${ROOM_URL.includes('?') ? '&' : '?'}type=room&key=${encodeURIComponent(o.key)}&device=${DEVICE}&t=${Date.now()}`);
+        const j = await res.json();
+        if (gid !== G.gameId || G.online !== o) return;
+        if (j.ok) syncRoom(j.room); else { o.status = 'over'; netNote('x', { raw: j.error || t('netFail') }); refresh(); return; }
+      } catch (e) {}
+      if (gid !== G.gameId || !G.online) return;
+      schedulePoll(G.turn !== G.human ? 1500 : G.online.status === 'waiting' ? 2500 : 4000);
+    }, ms);
+  }
+  async function sendRemote(c, over) {
+    const o = G.online, gid = G.gameId; if (!o) return;
+    const idx = movesMade() - 1;
+    let sent = false;
+    for (let tries = 0; tries < 5 && !sent; tries++) {
+      try {
+        const j = await roomApi({ type: 'room_move', key: o.key, device: DEVICE, idx, move: c, over: !!over });
+        if (gid !== G.gameId || G.online !== o) return;
+        sent = true;
+        if (j.ok) { if (UI.netNote && UI.netNote[0] === 'netRetry') UI.netNote = null; syncRoom(j.room); }
+        else if (j.conflict && j.room) { newGame(j.room, { key: o.key, room: o.room }); syncRoom(j.room); netNote('netResync'); }
+        else netNote('x', { raw: j.error || t('netSendFail') });
+      } catch (e) {
+        if (gid !== G.gameId) return;
+        netNote('netRetry');
+        await new Promise(r => setTimeout(r, 1500 * (tries + 1)));
+      }
+    }
+    if (!sent) netNote('netSendFail');
+    if (gid === G.gameId) schedulePoll(800);
+  }
+  async function leaveRoom(silent) {
+    const o = G.online; if (!o) return;
+    clearTimeout(pollTimer);
+    G.online = null;
+    try { await roomApi({ type: 'room_leave', key: o.key, device: DEVICE }); } catch (e) {}
+    if (!silent) { netNote('netLeftSelf'); refresh(); }
+  }
+
   // ---------------- fullscreen ----------------
   const appEl = document.querySelector('.app');
   const fsElement = () => document.fullscreenElement || document.webkitFullscreenElement || null;
@@ -2344,7 +2563,13 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
     if (!canHumanAct()) return;
     if (!G.legal.has(c)) { Sound.invalid(); return; }
     if (touch && UI.sel !== c) { select(c); return; }
+    let ends = false;
+    if (G.mode === 'online') {
+      const nb = G.board.slice(); nb[c] = G.turn; for (const f of G.legal.get(c)) nb[f] = G.turn;
+      ends = !E.legal(nb, 1).size && !E.legal(nb, 2).size;
+    }
     doMove(c);
+    if (G.mode === 'online') sendRemote(c, ends);
   }
   function setFocus(z) {
     UI.focus = (z === UI.focus) ? -1 : z;
@@ -2429,6 +2654,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
     if (G.over) text = t('turnOver');
     else if (G.thinking) text = t('turnThinking', { lv: lvName(G.level) });
     else if (G.mode === 'ai') text = G.turn === G.human ? t('turnYou') : t('turnAI', { lv: lvName(G.level) });
+    else if (G.mode === 'online') text = !G.online ? t('turnJoin') : G.online.status === 'waiting' ? t('turnWait') : !netPlaying() ? t('turnOver') : G.turn === G.human ? t('turnYou') : oppAway() ? t('turnAway') : t('turnOpp', { who: oppNick() });
     else text = t('turnColor', { c: colorName(G.turn) });
     $('turnText').textContent = text;
     $('turnDisc').className = 'disc-icon ' + (G.turn === 1 ? 'k' : 'w');
@@ -2436,12 +2662,14 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
     $('dots').hidden = !G.thinking;
 
     // settings
-    const oppVal = G.pend.mode === 'pvp' ? 'pvp' : String(G.pend.level);
+    const oppVal = G.pend.mode === 'pvp' || G.pend.mode === 'online' ? G.pend.mode : String(G.pend.level);
     document.querySelectorAll('#opp .opt').forEach(o => o.setAttribute('aria-pressed', String(o.dataset.v === oppVal)));
     document.querySelectorAll('#sides .opt').forEach(o => {
       o.setAttribute('aria-pressed', String(+o.dataset.v === G.pend.human && G.pend.mode === 'ai'));
       o.disabled = G.pend.mode === 'pvp';
     });
+    $('sideField').hidden = G.pend.mode === 'online';
+    renderNet();
     $('pending').hidden = !pendingDiffers();
     $('undo').disabled = !canUndo();
 
@@ -2494,14 +2722,19 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
     $('resetView').addEventListener('click', () => V.resetView());
     $('confirmGo').addEventListener('click', () => { if (UI.sel >= 0) { const c = UI.sel; clearSel(); tryPlace(c, false); } });
     $('confirmX').addEventListener('click', () => { clearSel(); setPreview(-1); });
-    $('newGame').addEventListener('click', newGame);
-    $('again').addEventListener('click', newGame);
+    $('newGame').addEventListener('click', () => newGame());
+    $('joinBtn').addEventListener('click', joinRoom);
+    $('leaveBtn').addEventListener('click', () => leaveRoom(false));
+    $('roomName').addEventListener('keydown', e => { if (e.key === 'Enter') joinRoom(); });
+    try { $('roomName').value = JSON.parse(localStorage.getItem('yatara:rittai:room') || '""'); $('nickName').value = JSON.parse(localStorage.getItem('yatara:lastName') || '""'); } catch (e) {}
+    window.addEventListener('pagehide', () => { const o = G.online; if (o && ROOM_URL && navigator.sendBeacon) navigator.sendBeacon(ROOM_URL, JSON.stringify({ type: 'room_leave', key: o.key, device: DEVICE })); });
+    $('again').addEventListener('click', () => { if (G.mode === 'online' && G.online) { hideResult(); joinRoom(); } else newGame(); });
     $('viewBoard').addEventListener('click', hideResult);
     $('undo').addEventListener('click', undo);
     $('opp').addEventListener('click', e => {
       const o = e.target.closest('.opt'); if (!o) return;
       const wasEx = G.pend.mode === 'ai' && G.pend.level === 3;
-      if (o.dataset.v === 'pvp') G.pend.mode = 'pvp';
+      if (o.dataset.v === 'pvp' || o.dataset.v === 'online') G.pend.mode = o.dataset.v;
       else { G.pend.mode = 'ai'; G.pend.level = +o.dataset.v; if (G.pend.level >= 2) Hall.tab = G.pend.level; renderHall(); }
       if (G.pend.mode === 'ai' && G.pend.level === 3 && !wasEx) toast(t('exToast'));
       if (pendingDiffers() && fresh()) newGame(); else refresh();
@@ -2547,7 +2780,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
   function restore(d) {
     G.board = Int8Array.from(d.board); G.turn = d.turn; G.last = d.last; G.over = !!d.over;
     G.history = (d.history || []).map(h => Object.assign({}, h, { board: Int8Array.from(h.board) }));
-    G.log = d.log || []; G.mode = d.mode || 'ai'; G.level = d.level != null ? d.level : 1; G.human = d.human || 1;
+    G.log = d.log || []; G.mode = d.mode === 'online' ? 'pvp' : (d.mode || 'ai'); G.level = d.level != null ? d.level : 1; G.human = d.human || 1;
     G.pend = d.pend || { mode: G.mode, human: G.human };
     if (G.pend.level == null) G.pend.level = G.level;
     G.undos = d.undos || 0; G.pendingClear = d.pendingClear || null;
