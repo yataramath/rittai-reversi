@@ -54,7 +54,7 @@ body {
 button { font: inherit; color: inherit; }
 button:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
 
-/* site bar (same on every game of やたら楽しい数学); full screen covers it */
+/* site bar (same on every game of やたら楽しいゲーム部屋); full screen covers it */
 .sitebar { display: flex; align-items: center; gap: 12px; height: 46px; padding: 0 16px; border-bottom: 1px solid var(--line-soft); background: var(--felt-deep); }
 .sitebar a { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); text-decoration: none; font-weight: 700; font-size: 14px; min-width: 0; }
 .sitebar a span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -416,8 +416,8 @@ body.lock { overflow: hidden; }
 <body>
 
 
-<nav class="sitebar" aria-label="やたら楽しい数学">
-  <a href="https://yataramath.github.io/" target="_top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg><span><span data-t="siteName">やたら楽しい数学</span> <small data-t="siteList">ゲーム一覧</small></span></a>
+<nav class="sitebar" aria-label="やたら楽しいゲーム部屋" data-ta="aria-label:siteName">
+  <a href="https://yataramath.github.io/" target="_top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg><span><span data-t="siteName">やたら楽しいゲーム部屋</span> <small data-t="siteList">ゲーム一覧</small></span></a>
 </nav>
 
 <div class="app">
@@ -475,8 +475,8 @@ body.lock { overflow: hidden; }
 
     <div class="result" id="result" hidden>
       <div class="result-card" role="dialog" aria-labelledby="resultTitle">
-        <p class="result-kicker" id="resultKicker">GAME OVER · 対局終了</p>
-        <h2 id="resultTitle">あなたの勝ち</h2>
+        <p class="result-kicker" id="resultKicker"></p>
+        <h2 id="resultTitle"></h2>
         <p class="result-sub" id="resultSub" hidden></p>
         <p class="result-score"><span class="disc-icon k"></span><b id="rB">0</b><span class="dash">–</span><b id="rW">0</b><span class="disc-icon w"></span></p>
         <p class="result-rec" id="resultRec" hidden></p>
@@ -581,7 +581,7 @@ body.lock { overflow: hidden; }
 <section class="hall-page" id="hall" aria-labelledby="hHall">
   <div class="hall-head">
     <h2 id="hHall" data-t="hallTitle">名前が残る人</h2>
-    <button class="btn hall-pending" id="hallPending" type="button" hidden>名前を登録する</button>
+    <button class="btn hall-pending" id="hallPending" type="button" hidden></button>
   </div>
   <div class="hall-cols">
     <div class="hall-col">
@@ -1304,7 +1304,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
       pendMin: '最弱に負けました。名前を登録する', pendMax: '最強に勝ちました。名前を登録する',
       cellLong: '{z}層 {cell}', stBlack: '黒', stWhite: '白', stLegal: '置ける・{n}枚返る', stEmpty: '空き',
       noMoves: 'まだ一手も打たれていません', pass: 'パス',
-      siteName: 'やたら楽しい数学', siteList: 'ゲーム一覧',
+      siteName: 'やたら楽しいゲーム部屋', siteList: 'ゲーム一覧',
       online: 'オンライン', onlineSub: '部屋の名前を合わせて、離れた人と対戦',
       roomLbl: '部屋の名前（合言葉）', roomPh: '例：りったい123', nickLbl: 'あなたの名前', nickPh: 'ニックネーム', join: '部屋に入る', leave: '出る',
       netIntro: '同じ部屋の名前を入れた2人で対戦できます。先に入った人が黒（先手）です。',
@@ -1372,7 +1372,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
       pendMin: 'You lost to the Weakest. Add your name', pendMax: 'You beat the Strongest. Add your name',
       cellLong: 'L{z} {cell}', stBlack: 'black', stWhite: 'white', stLegal: 'playable · flips {n}', stEmpty: 'empty',
       noMoves: 'No moves yet', pass: 'pass',
-      siteName: 'Yatara Math', siteList: 'all games',
+      siteName: 'Yatara Game Room', siteList: 'all games',
       online: 'Online', onlineSub: 'Enter the same room name to play someone far away',
       roomLbl: 'Room name (shared password)', roomPh: 'e.g. cube123', nickLbl: 'Your name', nickPh: 'Nickname', join: 'Join room', leave: 'Leave',
       netIntro: 'Two players who enter the same room name play each other. Whoever joins first plays black (first).',
@@ -1390,7 +1390,10 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
       tOppWins: '{who} wins', sRematch: 'Press “Play again”; the next game starts when your opponent joins too.',
     },
   };
+  // 言語：?lang=en / ?lang=ja ＞ この端末で前に選んだ言語（やたら楽しいゲーム部屋の全ゲーム共通）＞ ブラウザの言語
   let LANG = (() => {
+    try { const q = new URLSearchParams(location.search).get('lang'); if (q === 'en' || q === 'ja') { localStorage.setItem('yatara:lang', q); return q; } } catch (e) {}
+    try { const s = (localStorage.getItem('yatara:lang') || '').replace(/"/g, ''); if (s === 'ja' || s === 'en') return s; } catch (e) {}
     try { const s = localStorage.getItem('r444-lang'); if (s === 'ja' || s === 'en') return s; } catch (e) {}
     if (/^#en\b/i.test(location.hash)) return 'en';
     if (/^#ja\b/i.test(location.hash)) return 'ja';
@@ -2424,7 +2427,10 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
   }
   function syncRoom(rv) {
     const o = G.online; if (!o) return;
-    if (!rv.seat || rv.moves.length < o.moves.length) { o.status = 'over'; netNote('netGone'); refresh(); return; }
+    if (!rv.seat) { o.status = 'over'; netNote('netGone'); refresh(); return; }
+    // an older answer that arrives after a newer one (a poll crossing our own move) is ignored
+    if (o.v && rv.v < o.v) return;
+    o.v = rv.v;
     if (rv.status !== o.status) UI.netNote = null;
     o.status = rv.status; o.players = rv.players; o.moves = rv.moves;
     pump();
@@ -2813,7 +2819,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
   }
   function setLang(l) {
     LANG = l;
-    try { localStorage.setItem('r444-lang', l); } catch (e) {}
+    try { localStorage.setItem('r444-lang', l); localStorage.setItem('yatara:lang', l); } catch (e) {}
     applyStatic(); refresh(); renderHall(); renderResult(); setupNameForm();
     if (UI.sel >= 0 && G.legal.has(UI.sel)) select(UI.sel);
   }
